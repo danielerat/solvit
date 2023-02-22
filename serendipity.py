@@ -1,75 +1,61 @@
 from beautifultable import BeautifulTable
+from tabulate import tabulate
+
+# My Custom Inclusive Range
+class Irange:
+    def __init__(self,*args):
+        ars=args
+        numargs=len(ars)
+        
+        if numargs<1: raise TypeError("Myst Have At lest one parameter")
+        elif numargs==1:
+            self.start=0
+            self.end=ars[0]
+            self.step=1
+        elif numargs==2:
+            (self.start,self.end)=ars
+            self.step=1
+        elif numargs==3:
+            (self.start,self.end,self.step)=ars
+        else: raise TypeError("Too Many Arguments ")
+    
+    def __iter__(self):
+        i=self.start
+        while i <= self.end:
+            yield i
+            i+=self.step
+
 # Our Great class
 class Store:
     # And this is how we do constructors in python 
-    def __init__(self,stock):
-        self.stock=stock #initializing the our constructor
+    def __init__(self):
+        self.stock={} #initializing the our constructor
+      
+        self.min=float(input("What's your Minimum: "))
+        self.max=float(input("What's your Maximum: "))
 
-    # Show a given stock
+        print(tabulate([["value"+str(i+1) for i in range(len(list(Irange(self.min,self.max,1.251))))]]))
+
+        for i in Irange(self.min,self.max,1.25):
+            self.stock[i]=input().split()
+        
+    
     def show_stock(self):
         print("")
         print("\t Marie's Stock")
-        stockKeys=self.stock.keys()
+        stockKeys=list(map(str, self.stock.keys()))
         table = BeautifulTable()
-        [table.rows.append(self.stock.get(i).values()) for i in self.stock]
- 
+        [table.rows.append(self.stock.get(i)) for i in self.stock]
         table.columns.header=(stockKeys)
         table.rows.header=(stockKeys)
         print(table)
-    
-    # Get the whole stock
     def get_stock(self,cylinder,sphere):
-        return ("Stock Left for cylinder/Sphere {}/{} : {} glasses".format(cylinder,sphere,self.stock.get(str(cylinder)).get(str(sphere))))
-    # Add elements to a given stock 
-    def add_stock(self,cylinder,sphere,count):
-        current_stock=self.stock.get(str(cylinder)).get(str(sphere))
-        self.stock[str(cylinder)][str(sphere)]= current_stock + count
-        self.show_stock()
-
-    def reduce_stock(self,cylinder,sphere,count):
-        current_stock=self.stock.get(str(cylinder)).get(str(sphere))
-        self.stock[str(cylinder)][str(sphere)]=current_stock-count
-        self.show_stock()
+        keys=self.stock.keys()
+        idx=self.stock.get(cylinder)[list(keys).index(sphere)]
+        return ("Stock Left for cylinder/Sphere {}/{} : {} glasses".format(cylinder,sphere,idx))
     
-    def get_total_glass(self):
-        count=0
-        for i in self.stock.values():
-            for j in i.values():
-                count+=j
-        return "Total Glases are: "+count
-
-stock={
-    "0":{
-        "0":10,
-        "1.25":0,
-        "2":8,
-        "2.25":0
-    },
-    "1.25":{
-         "0":25,
-        "1.25":2,
-        "2":0,
-        "2.25":0
-    },
-    "2":{
-         "0":0,
-        "1.25":0,
-        "2":9,
-        "2.25":0
-    },
-    "2.25":{
-         "0":10,
-        "1.25":0,
-        "2":11,
-        "2.25":0
-    },
-}
-
 # Our Object
-marie=Store(stock)
+marie=Store()
 
-# Show The stock of marie
+# Show the stock
 marie.show_stock()
-
-
-
